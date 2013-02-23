@@ -21,6 +21,7 @@ playArray(0, document.getElementById("myVid"), videos);
 var appCache = window.applicationCache;
 
 if (typeof appCache != 'undefined') {
+	if (appCache.status === 0) document.body.style.background = "red";
 	// Cached event is fired when initially caching
 	appCache.addEventListener('cached', function() {
 		document.body.style.background = "green";
@@ -38,6 +39,7 @@ window.applicationCache.addEventListener('updateready', function(e) {
 		// Browser downloaded a new app cache.
 		// Swap it in and reload the page to get the new hotness.
 		window.applicationCache.swapCache();
+		console.log("Reloading....");
 		window.location.reload();
 	}
 });
@@ -76,4 +78,3 @@ appCache.addEventListener('progress', handleCacheEvent, false);
 
 // Fired when the manifest resources have been newly redownloaded.
 appCache.addEventListener('updateready', handleCacheEvent, false);
-

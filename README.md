@@ -18,3 +18,12 @@ Furthermore if power loss occurs and the [Neon](http://neon.webconverger.com)
 display is rebooted, the
 [window.applicationCache](www.whatwg.org/specs/web-apps/current-work/multipage/offline.html)
 should persist. The application cache should also facilitate faster load times.
+
+# Related bugs
+
+Video playback <http://vloopbug.webconverger.com/>
+
+* <https://bugzilla.mozilla.org/show_bug.cgi?id=844425>
+* <http://stackoverflow.com/questions/5807504/chrome-not-releasing-memory-from-video>
+* <http://stackoverflow.com/questions/4694519/how-do-i-change-the-src-of-an-html5-video-via-javascript-without-either-crashing>
+* <http://stackoverflow.com/questions/5128819/keeping-chrome-from-freezing-when-playing-html5-video?rq=1>
