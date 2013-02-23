@@ -1,22 +1,21 @@
 var videos = ["a.webm", "b.webm", "c.webm", "d.webm"];
-function playArray(index, ele, array, listener) {
-	if (listener) {
-		ele.removeEventListener(listener);
-	}
-	ele.src = array[index];
-	// Is this a memory leak?
-	// ele.load();
-	ele.play();
+index = 0;
+
+function play(index) {
+var video = document.createElement('video');
+video.src = videos[index];
+document.body.appendChild(video);
+video.play();
+video.addEventListener('ended', function() {
+	document.body.removeChild(video);
 	index++;
-	if (index >= array.length) {
-		index = 0;
-	}
-	listener = ele.addEventListener('ended', function() {
-		playArray(index, ele, array, listener);
+	if (index >= videos.length) index = 0;
+	play(index);
 	},
 	false);
 }
-playArray(0, document.getElementById("myVid"), videos);
+
+play(index);
 
 var appCache = window.applicationCache;
 
