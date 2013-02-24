@@ -1,50 +1,102 @@
 var videos = ["a.webm", "b.webm", "c.webm", "d.webm"];
 
+function downloadUrl(url, callback) {
+	var request = new XMLHttpRequest();
+	request.onreadystatechange = function() {
+		if (request.readyState == 4) {
+			callback(request.responseText, request.status);
+		}
+	};
+	request.open('GET', url, true);
+	request.send(null);
+}
+
 var n = 0;
 var video = document.createElement('video');
 document.body.appendChild(video);
 video.src = videos[n];
-video.addEventListener('ended', function(){
+video.addEventListener('ended', function() {
+	console.log("Played " + video.src);
 	n++;
 	this.src = videos[n];
 	this.play();
-	if (n == 3) n = -1;
+	if (n == 3) n = - 1;
 });
 video.play();
 
-var appCache = window.applicationCache;
-
-if (typeof appCache != 'undefined') {
-	if (appCache.status === 0) document.body.style.background = "red";
-	// Cached event is fired when initially caching
-	appCache.addEventListener('cached', function() {
-		document.body.style.background = "green";
+if (!window.applicationCache) {
+	setTimeout(function() {
+		_gaq.push(['_trackEvent', 'Appcache', 'Version', 'n/a']);
 	},
-	false);
-	// No update is fired when an existing Appcache is found to have no update
-	appCache.addEventListener('noupdate', function() {
-		if (appCache.status == 1) document.body.style.background = "green";
-	},
-	false);
+	1000);
+	document.body.style.background = "red";
 }
 
-window.applicationCache.addEventListener('updateready', function(e) {
+var appCache = window.applicationCache;
+
+// "Naturally" reload when an update is available
+window.applicationCache.addEventListener('updateready', function() {
 	if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-		// Browser downloaded a new app cache.
-		// Swap it in and reload the page to get the new hotness.
+		console.log("Reloading...");
 		window.applicationCache.swapCache();
-		console.log("Reloading....");
-		window.location.reload();
+		location.reload();
 	}
-});
+},
+false);
+
+setInterval(function() {
+	try { // There's nothing to update for first-time load, browser freaks out :/
+		window.applicationCache.update();
+	} catch(e) {
+		console.log("Failed to update...");
+	}
+},
+1000 * 60 * 1); // Every minute
+// Use GA to track the update rate of this manifest appcache thing
+// and see how fast users are updated to the latest cache/version
+if (typeof _gaq != 'undefined') window.addEventListener('load', function() {
+	setTimeout(function() {
+		var r = new XMLHttpRequest();
+		r.open('GET', 'manifest.appcache', true);
+		r.onload = function() {
+			var text = this.responseText;
+			if (!text) return;
+			var version = (text.match(/#\s\d[^\n\r]+/) || [])[0];
+			if (version) _gaq.push(['_trackEvent', 'Appcache', 'Version', version.replace(/^#\s/, '')]);
+		};
+		r.send();
+	},
+	1000);
+},
+false);
+
+if (appCache.status === 0) document.body.style.background = "red";
+// Cached event is fired when initially caching
+appCache.addEventListener('cached', function() {
+	document.body.style.background = "green";
+},
+false);
+
+// No update is fired when an existing Appcache is found to have no update
+appCache.addEventListener('noupdate', function(e) {
+	console.log("noupdate");
+	console.log(e);
+	console.log(appCache.status);
+	if (appCache.status == 1) {
+		document.body.style.background = "green";
+	}
+	else {
+		document.body.style.background = "red";
+	}
+},
+false);
 
 function handleCacheEvent(e) {
 	console.log(e);
 	console.log(appCache.status);
 }
-
 function handleCacheError(e) {
-	alert('Error: Cache failed to update!');
+	console.log('Error: Cache failed to update!');
 }
 
 // Fired after the first cache of the manifest.
@@ -61,14 +113,8 @@ appCache.addEventListener('downloading', handleCacheEvent, false);
 appCache.addEventListener('error', handleCacheError, false);
 
 // Fired after the first download of the manifest.
-appCache.addEventListener('noupdate', handleCacheEvent, false);
-
+// appCache.addEventListener('noupdate', handleCacheEvent, false);
 // Fired if the manifest file returns a 404 or 410.
 // This results in the application cache being deleted.
 appCache.addEventListener('obsolete', handleCacheEvent, false);
 
-// Fired for each resource listed in the manifest as it is being fetched.
-appCache.addEventListener('progress', handleCacheEvent, false);
-
-// Fired when the manifest resources have been newly redownloaded.
-appCache.addEventListener('updateready', handleCacheEvent, false);
