@@ -1,21 +1,16 @@
 var videos = ["a.webm", "b.webm", "c.webm", "d.webm"];
-index = 0;
 
-function play(index) {
+var n = 0;
 var video = document.createElement('video');
-video.src = videos[index];
 document.body.appendChild(video);
+video.src = videos[n];
+video.addEventListener('ended', function(){
+	n++;
+	this.src = videos[n];
+	this.play();
+	if (n == 3) n = -1;
+});
 video.play();
-video.addEventListener('ended', function() {
-	document.body.removeChild(video);
-	index++;
-	if (index >= videos.length) index = 0;
-	play(index);
-	},
-	false);
-}
-
-play(index);
 
 var appCache = window.applicationCache;
 
