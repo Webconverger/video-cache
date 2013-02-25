@@ -18,3 +18,8 @@ Furthermore if power loss occurs and the [Neon](http://neon.webconverger.com)
 display is rebooted, the
 [applicationCache](www.whatwg.org/specs/web-apps/current-work/multipage/offline.html)
 should persist. The application cache should also facilitate faster load times.
+
+# Firefox issues
+
+* <https://bugzilla.mozilla.org/show_bug.cgi?id=825618>
+* <https://bugzilla.mozilla.org/show_bug.cgi?id=730424>

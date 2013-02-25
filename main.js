@@ -1,4 +1,4 @@
-var videos = ["a.webm", "b.webm", "c.webm", "d.webm"];
+var videos = ["a.webm", "b.webm", "e.webm", "d.webm"];
 
 function downloadUrl(url, callback) {
 	var request = new XMLHttpRequest();
@@ -36,11 +36,11 @@ var appCache = window.applicationCache;
 
 // "Naturally" reload when an update is available
 window.applicationCache.addEventListener('updateready', function() {
-	if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+	//if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
 		console.log("Reloading...");
-		window.applicationCache.swapCache();
+		try { window.applicationCache.swapCache(); } catch(e) {}
 		location.reload();
-	}
+	//}
 },
 false);
 
@@ -70,10 +70,13 @@ if (typeof _gaq != 'undefined') window.addEventListener('load', function() {
 },
 false);
 
-if (appCache.status === 0) document.body.style.background = "red";
+//if (appCache.status === 0) document.body.style.background = "red"; // Firefox doesn't do this correctly
+
 // Cached event is fired when initially caching
 appCache.addEventListener('cached', function() {
+	// Firefox has incorrect values of applicationCache.status, so we are are not checking
 	document.body.style.background = "green";
+	location.reload();
 },
 false);
 
@@ -82,12 +85,13 @@ appCache.addEventListener('noupdate', function(e) {
 	console.log("noupdate");
 	console.log(e);
 	console.log(appCache.status);
-	if (appCache.status == 1) {
-		document.body.style.background = "green";
-	}
-	else {
-		document.body.style.background = "red";
-	}
+	document.body.style.background = "green";
+	//if (appCache.status == 1) {
+	//}
+	// Firefox has incorrect values of applicationCache.status
+	//else { // On first load applicationCache.status===applicationCache.UNCACHED, so cached event should take precendence
+	//	document.body.style.background = "red";
+	//}
 },
 false);
 
