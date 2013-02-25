@@ -17,7 +17,7 @@ video.play();
 // "Naturally" reload when an update is available
 window.applicationCache.addEventListener('updateready', function() {
 	//if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
-		console.log("Reloading...");
+		console.log("updateready Reloading...");
 		try { window.applicationCache.swapCache(); } catch(e) {} // This might fail on FF
 		location.reload();
 	//}
@@ -39,6 +39,11 @@ setInterval(function() {
 applicationCache.addEventListener('cached', function() {
 	// Firefox has incorrect values of applicationCache.status, so we are are not checking
 	document.body.style.background = "green";
+
+	console.log("cached Reloading...");
+	try { window.applicationCache.swapCache(); } catch(e) {} // This might fail on FF
+	location.reload();
+
 },
 false);
 
