@@ -17,10 +17,10 @@ document.body.appendChild(video);
 video.src = videos[n];
 video.addEventListener('ended', function() {
 	console.log("Played " + video.src);
-	n++;
+	if (n >= videos.length) n = 0;
 	this.src = videos[n];
 	this.play();
-	if (n == 3) n = - 1;
+	n++;
 });
 video.play();
 
@@ -51,7 +51,7 @@ setInterval(function() {
 		console.log("Failed to update...");
 	}
 },
-1000 * 60 * 1); // Every minute
+1000 * 60 * 1); // Every minute check for an update
 // Use GA to track the update rate of this manifest appcache thing
 // and see how fast users are updated to the latest cache/version
 if (typeof _gaq != 'undefined') window.addEventListener('load', function() {
